@@ -17,6 +17,6 @@
     }
   },
   "require": {
-    "twig/twig": "@stable",
+    "twig/twig": "@stable"
   }
 }
