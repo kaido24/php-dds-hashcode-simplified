@@ -11,7 +11,7 @@
     }
   ],
   "autoload": {
-    "classmap": ["hashcode-lib/tests", "hashcode-lib/tests/testfiles", "example/app"],
+    "classmap": ["example/app"],
     "psr-0": {
       "SK\\Digidoc\\": ["hashcode-lib/src", "example/app/src"]
     }
