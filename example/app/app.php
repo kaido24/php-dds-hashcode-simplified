@@ -44,8 +44,6 @@ require __DIR__.'/helpers/Doc_Helper.php';
 require __DIR__.'/helpers/File_Helper.php';
 require __DIR__.'/helpers/CertificateHelpers.php';
 require __DIR__.'/DigiDocService/DigiDocService.php';
-require __DIR__ .'/../../vendor/twig/twig/lib/Twig/Autoloader.php';
-Twig_Autoloader::register();
 
 $loader = new Twig_Loader_Filesystem(__DIR__  . '/views');
 $twig = new Twig_Environment($loader, array( 'debug' => true));
