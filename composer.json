@@ -1,0 +1,27 @@
+{
+  "name": "sk-hashcode",
+  "description": "hashcode-sample app",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "SK",
+      "email": "info@sk.ee"
+    }
+  ],
+  "autoload": {
+    "classmap": ["hashcode-lib/tests", "hashcode-lib/tests/testFiles", "example/app"],
+    "psr-0": {
+      "SK\\Digidoc\\": "hashcode-lib/src"
+    }
+  },
+   "require": {
+      "twig/twig": "~1.0"
+  },
+  "require-dev": {
+    "katzgrau/klogger": "dev-master",
+    "phpunit/phpunit": "@stable",
+    "phpdocumentor/phpdocumentor": "dev-master",
+    "phpmd/phpmd": "@stable"
+  }
+}

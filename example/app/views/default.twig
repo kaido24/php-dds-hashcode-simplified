@@ -1,0 +1,32 @@
+<div class="span6">
+    <form id="oldContainerForm" method="post" enctype="multipart/form-data">
+        <div class="titled-container-header">
+            <h1>Scenario 1: start by sending a DigiDoc/BDOC file</h1>
+        </div>
+        <div class="titled-container-body">
+            <input name="container" type="file" accept=".bdoc,.ddoc"/>
+            <br/>
+            <input type="hidden" name="request_act" value="PARSE_OLD_DOCUMENT"/>
+            <input type="submit" value="Send DigiDoc/BDOC file" onclick="document.oldContainerForm.submit();"/>
+        </div>
+    </form>
+</div>
+<div class="span6">
+    <form id="newContainerForm" method="post" enctype="multipart/form-data">
+        <div class="titled-container-header">
+            <h1>Scenario 2: start by choosing signed file format and sending a datafile</h1>
+        </div>
+        <div class="titled-container-body">
+            <input name="dataFile" type="file"/>
+            <br/>
+            <select name="containerType">
+                <option value="BDOC 2.1">BDOC 2.1</option>
+                <option value="DIGIDOC-XML 1.3">DIGIDOC-XML 1.3</option>
+            </select>
+            <br/>
+            <br/>
+            <input type="hidden" name="request_act" value="CREATE_NEW_DOCUMENT"/>
+            <input type="submit" value="Send datafile" onclick="document.newContainerForm.submit();"/>
+        </div>
+    </form>
+</div>

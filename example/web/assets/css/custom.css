@@ -1,0 +1,61 @@
+#container {
+    padding-top: 10px;
+    padding-left: 30px;
+}
+
+#title-text {
+    margin-top: 13px;
+}
+
+.header-row {
+    padding-bottom: 10px;
+    border-bottom: 1px solid black;
+}
+
+.footer-row {
+    margin-top: 20px;
+    padding-left: 30px;
+    border-top: 1px solid black;
+}
+
+.content {
+    padding-top: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.titled-container-header {
+    position: relative;
+    padding: 10px 20px;
+    margin: 0;
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
+    background-color: #829aa8;
+    border: 1px solid #768995;
+    border-radius: 3px 3px 0 0
+}
+
+.titled-container-header h1 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 16px
+}
+
+.titled-container-body {
+    padding: 20px;
+    font-size: 14px;
+    background-color: #fff;
+    border: 1px solid #d8dee2;
+    border-top: 0;
+    border-radius: 0 0 3px 3px
+}
+
+.datatable {
+    background-color: #f5f5f5;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.idSignModalContent table td, .mobileSignModalContent table td {
+    padding: 5px;
+}
