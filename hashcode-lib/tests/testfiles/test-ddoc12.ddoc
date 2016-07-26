@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SignedDoc format="DIGIDOC-XML" version="1.2">
+<DataFile ContentType="EMBEDDED_BASE64" Filename="file1.txt" Id="D0" MimeType="application/octet-stream" Size="14">dGhpcyBpcyBmaWxlMQo=
+</DataFile>
+<DataFile ContentType="EMBEDDED_BASE64" Filename="file2.txt" Id="D1" MimeType="application/octet-stream" Size="14">dGhpcyBpcyBmaWxlMgo=
+</DataFile>
+</SignedDoc>

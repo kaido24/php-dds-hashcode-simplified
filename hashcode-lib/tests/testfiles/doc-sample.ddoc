@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SignedDoc format="DIGIDOC-XML" version="1.3" xmlns="http://www.sk.ee/DigiDoc/v1.3.0#">
+<DataFile ContentType="EMBEDDED_BASE64" Filename="test.txt" MimeType="text/plain" Id="D0" Size="42" xmlns="http://www.sk.ee/DigiDoc/v1.3.0#">VGhpcyBpcyBhIHRlc3QgZmlsZQ0Kc2Vjb25kbGluZQ0KdGhpcmRsaW5l
+</DataFile>
+</SignedDoc>

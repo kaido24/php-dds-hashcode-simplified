@@ -1,33 +1,12 @@
 <?php
-/**
- * Dds-Hashcode Library
- * Copyright (C) 2014 AS Sertifitseerimiskeskus www.sk.ee.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @package    DDS-Hashcode
- * @copyright  2014 AS Sertifitseerimiskeskus
- * @license    http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @link       http://www.sk.ee
- */
 namespace SK\Digidoc;
 
 /**
  * Central hub for configuration and session management.
  *
- * Directory where temporary files are stored can be configured by passing configuration array to constructor. Default
- * directory for temporary files is `sys_get_temp_dir() . DIRECTORY_SEPARATOR . "php-dds-hashcode"`
+ * Directory where temporary files are stored can be configured by passing
+ * configuration array to constructor. Default directory for temporary files
+ * is `sys_get_temp_dir() . DIRECTORY_SEPARATOR . "php-dds-hashcode"`
  *
  * ```php
  * // Example 1. Overriding default configuration.
@@ -48,39 +27,40 @@ namespace SK\Digidoc;
  * instance. To delete all temporary files in temporary directory you can call
  * {@link Digidoc::deleteLocalTempFiles()}
  *
- *
- *
- * @author Madis Loitmaa
- *
  */
-class Digidoc {
+class Digidoc
+{
     /**
-     * Configuratrion key for temporary dir.
+     * Configuration key for temporary dir.
      *
      * @var string
      */
     const TEMPORARY_DIR = 'temporary_dir';
-    const DIGIDOC_VERSION = '1.1.3';
+    const DIGIDOC_VERSION = '1.1.4';
     const HASHCODE_DEFAULT_TEMP_HASHCODE_DIRECTORY = 'php-dds-hashcode';
     const DDOC_DATA_FILE_CHUNK_SPLIT = true;
 
     private $configuration;
 
-    public function __construct ($configuration = array()) {
+    /**
+     * Creates new DigiDoc Service instance with given configuration or using default configuration
+     *
+     * Digidoc constructor.
+     *
+     * @param array $configuration
+     */
+    public function __construct(array $configuration = array())
+    {
         $this->configuration = array_merge($this->configurationDefaults(), $configuration);
     }
 
-    private function configurationDefaults () {
-        return array (
-            self::TEMPORARY_DIR => self::defaultTemporaryDirectory()
-        );
-    }
-
-    private static function defaultTemporaryDirectory () {
-        return sys_get_temp_dir() . DIRECTORY_SEPARATOR . self::HASHCODE_DEFAULT_TEMP_HASHCODE_DIRECTORY;
-    }
-
-    public static function version () {
+    /**
+     * Get dds-hashcode library version
+     *
+     * @return string
+     */
+    public static function version()
+    {
         return self::DIGIDOC_VERSION;
     }
 
@@ -89,22 +69,34 @@ class Digidoc {
      *
      * @return DigidocSession
      */
-    public function createSession () {
+    public function createSession()
+    {
         $session = new DigidocSession($this->configuration);
 
         return $session;
     }
 
-    public function deleteLocalTempFiles () {
+    public function deleteLocalTempFiles()
+    {
         $dir = self::temporaryDirectory($this->configuration);
         if (file_exists($dir)) {
             self::deleteAllFilesInDirectory($dir);
         }
     }
 
-    public static function temporaryDirectory ($configuration) {
-        return empty($configuration[self::TEMPORARY_DIR]) ?
-            Digidoc::defaultTemporaryDirectory() :
+    /**
+     * Get or set temporary upload directory for files
+     *
+     * @param array $configuration
+     *
+     * @return string
+     */
+    public static function temporaryDirectory($configuration)
+    {
+        return empty($configuration[self::TEMPORARY_DIR])
+            ?
+            Digidoc::defaultTemporaryDirectory()
+            :
             $configuration[self::TEMPORARY_DIR];
     }
 
@@ -115,11 +107,26 @@ class Digidoc {
      *
      * @param String $dir
      */
-    public static function deleteAllFilesInDirectory ($dir) {
+    public static function deleteAllFilesInDirectory($dir)
+    {
         $dirIterator = new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS);
         foreach (new \RecursiveIteratorIterator($dirIterator, \RecursiveIteratorIterator::CHILD_FIRST) as $file) {
             $file->isDir() ? rmdir($file) : unlink($file);
         }
     }
 
+    /**
+     * Default values for DigiDoc Service configuration
+     *
+     * @return array
+     */
+    private function configurationDefaults()
+    {
+        return array(self::TEMPORARY_DIR => self::defaultTemporaryDirectory());
+    }
+
+    private static function defaultTemporaryDirectory()
+    {
+        return sys_get_temp_dir().DIRECTORY_SEPARATOR.self::HASHCODE_DEFAULT_TEMP_HASHCODE_DIRECTORY;
+    }
 }

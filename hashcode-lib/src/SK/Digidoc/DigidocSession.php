@@ -1,38 +1,14 @@
 <?php
-/**
- * Dds-Hashcode Library
- * Copyright (C) 2014 AS Sertifitseerimiskeskus www.sk.ee.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @package    DDS-Hashcode
- * @author     Madis Loitmaa
- * @copyright  2014 AS Sertifitseerimiskeskus
- * @license    http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @link       http://www.sk.ee
- *
- */
 namespace SK\Digidoc;
 
 /**
  * Helper for storing local temporary files.
  *
  * Converting bdoc/ddoc files to and from hascodes format requires creating temporary files.
- * The purpouse of `DigidocSession` is abstract away the file management part when
+ * The purpose of `DigidocSession` is abstract away the file management part when
  * doing the conversion.
  *
- * In case you don't need such abstaction, you can use {@link BdocContainer} or {@link DdocContainer}
+ * In case you don't need such abstraction, you can use {@link BdocContainer} or {@link DdocContainer}
  * directly.
  *
  * To create DigidocSession, please use {@link Digidoc::createSession()}.
@@ -43,7 +19,7 @@ namespace SK\Digidoc;
  * use SK\Digidoc\Digidoc;
  *
  * $digidoc = new Digidoc();
- * // Returnd DigidocSession
+ * // Returned DigidocSession
  * $session = $digidoc->createSession();
  * // you can store DigidocSession inside HTTP $_SESSION
  * $_SESSION['hashcodeSession'] = $session;
@@ -109,13 +85,9 @@ namespace SK\Digidoc;
  * which will be deleted by calling {@link DigidocSession::end()} on {@link DigidocSession}
  * instance. To delete all temporary files in temporary directory you can call
  * {@link Digidoc::deleteLocalTempFiles()}
- *
- *
- *
- * @author Madis Loitmaa
- *
  */
-class DigidocSession {
+class DigidocSession
+{
 
     private $sessionId;
 
@@ -126,7 +98,8 @@ class DigidocSession {
      *
      * @param array $configuration
      */
-    public function __construct (array $configuration) {
+    public function __construct(array $configuration)
+    {
         $this->configuration = $configuration;
     }
 
@@ -141,9 +114,10 @@ class DigidocSession {
      * @param string $data
      *
      * @throws DigidocException in case of invalid input.
-     * @return StringContainer
+     * @return SessionContainerAdapter
      */
-    public function containerFromString ($data) {
+    public function containerFromString($data)
+    {
         if (strpos($data, 'PK') === 0) {
             $file = $this->createFile();
             file_put_contents($file, $data);
@@ -163,11 +137,37 @@ class DigidocSession {
      *
      * @return string file full path.
      */
-    public function createFile () {
+    public function createFile()
+    {
         return tempnam($this->requireSessionPath(), 'digidoc');
     }
 
-    private function requireSessionPath () {
+    /**
+     * Returns session id.
+     *
+     * @return string
+     */
+    public function getSessionId()
+    {
+        if ($this->sessionId === null) {
+            $this->initSession();
+        }
+
+        return $this->sessionId;
+    }
+
+    /**
+     * Ends session.
+     *
+     * Ends session and deletes all local temporary files related to this session.
+     */
+    public function end()
+    {
+        $this->deleteSessionFiles();
+    }
+
+    private function requireSessionPath()
+    {
         $path = $this->getSessionPath();
         if (!is_dir($path)) {
             mkdir($path, 0700, true);
@@ -176,37 +176,18 @@ class DigidocSession {
         return $path;
     }
 
-    private function getSessionPath () {
-        return Digidoc::temporaryDirectory($this->configuration) . DIRECTORY_SEPARATOR . $this->getSessionId();
+    private function getSessionPath()
+    {
+        return Digidoc::temporaryDirectory($this->configuration).DIRECTORY_SEPARATOR.$this->getSessionId();
     }
 
-    /**
-     * Returns session id.
-     *
-     * @return string
-     */
-    public function getSessionId () {
-        if ($this->sessionId === null) {
-            $this->initSession();
-        }
-
-        return $this->sessionId;
-    }
-
-    private function initSession () {
+    private function initSession()
+    {
         $this->sessionId = uniqid(null, true);
     }
 
-    /**
-     * Ends session.
-     *
-     * Ends session and deletes all local temporary files related to this session.
-     */
-    public function end () {
-        $this->deleteSessionFiles();
-    }
-
-    private function deleteSessionFiles () {
+    private function deleteSessionFiles()
+    {
         if (file_exists($this->getSessionPath())) {
             Digidoc::deleteAllFilesInDirectory($this->getSessionPath());
             rmdir($this->getSessionPath());

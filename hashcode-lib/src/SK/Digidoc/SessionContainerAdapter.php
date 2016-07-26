@@ -1,26 +1,4 @@
 <?php
-/**
- * Dds-Hashcode Library
- * Copyright (C) 2014 AS Sertifitseerimiskeskus www.sk.ee.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @package    DDS-Hashcode
- * @copyright  2014 AS Sertifitseerimiskeskus
- * @license    http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @link       http://www.sk.ee
- */
 namespace SK\Digidoc;
 
 /**
@@ -28,11 +6,9 @@ namespace SK\Digidoc;
  *
  * Provides {@link StringContainer} interface to {@linl FileContainer}
  * using temporary files stored in {@link DigidocSession}
- *
- * @author Madis Loitmaa
- *
  */
-class SessionContainerAdapter implements StringContainer {
+class SessionContainerAdapter implements StringContainerInterface
+{
     private $session;
     private $fileContainer;
 
@@ -41,36 +17,27 @@ class SessionContainerAdapter implements StringContainer {
      *
      * Use {@link DigidocSession::containerFromString} to create instance from string.
      *
-     * @param DigidocSession $session
-     * @param FileContainer  $fileContainer
+     * @param DigidocSession         $session
+     * @param FileContainerInterface $fileContainer
      */
-    public function __construct (DigidocSession $session, FileContainer $fileContainer) {
+    public function __construct(DigidocSession $session, FileContainerInterface $fileContainer)
+    {
         $this->session = $session;
         $this->fileContainer = $fileContainer;
     }
 
-    public function getDataFiles () {
+    public function getDataFiles()
+    {
         return $this->fileContainer->getDataFiles();
     }
 
-    public function toString () {
-        return $this->fileContainer->toString();
-    }
-
-    public function isHashcodesFormat () {
+    public function isHashcodesFormat()
+    {
         return $this->fileContainer->isHashcodesFormat();
     }
 
-    public function toHashcodeFormat () {
-        $newFile = $this->session->createFile();
-
-        return new SessionContainerAdapter(
-            $this->session,
-            $this->fileContainer->writeAsHashcodes($newFile)
-        );
-    }
-
-    public function toDatafilesFormat ($datafiles) {
+    public function toDatafilesFormat($datafiles)
+    {
         $newFile = $this->session->createFile();
 
         return new SessionContainerAdapter(
@@ -79,7 +46,23 @@ class SessionContainerAdapter implements StringContainer {
         );
     }
 
-    public function getContainerFormat () {
+    public function toHashcodeFormat()
+    {
+        $newFile = $this->session->createFile();
+
+        return new SessionContainerAdapter(
+            $this->session,
+            $this->fileContainer->writeAsHashcodes($newFile)
+        );
+    }
+
+    public function toString()
+    {
+        return $this->fileContainer->toString();
+    }
+
+    public function getContainerFormat()
+    {
         return $this->fileContainer->getContainerFormat();
     }
 }
