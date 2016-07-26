@@ -40,7 +40,7 @@ foreach ($signatures_data as $signature) {
     $singatures[] = $signature;
 }
     $template_vars = array(
-        'header' =>  array(
+        'document' =>  array(
             'format' => $document_file_info->Format,
             'version' => $document_file_info->Version,
         ),
