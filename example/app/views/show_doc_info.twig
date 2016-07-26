@@ -1,0 +1,11 @@
+{#  include page parts #}
+<div class="row content">
+{% include 'show_doc_info_parts/general_container_info.twig' %}
+{% include 'show_doc_info_parts/files.twig' %}
+{% include 'show_doc_info_parts/signatures.twig' %}
+</div>
+
+{#  include modals #}
+{% include 'modals/add_datafile_modal.twig' %}
+{% include 'modals/id_sign_modal.twig' %}
+{% include 'modals/mobile_sign_modal.twig' %}

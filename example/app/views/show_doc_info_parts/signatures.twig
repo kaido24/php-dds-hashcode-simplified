@@ -1,0 +1,37 @@
+<div class="datatable">
+<h4>Signatures</h4>
+<div id="pluginLocation"></div>
+    <table class="table">
+      <tr>
+        <th>Id</th>
+        <th>Status</th>
+        <th>Additional status info</th>
+        <th>Time</th>
+        <th>Role</th>
+        <th>Signer</th>
+        <th style="height: 35px; line-height: 35px;">Add signature:
+        {# The action that initiates the addition of new signature with ID Card to the container in DDS session. #}
+        <a href="#"><img src="assets/images/id-kaart-logo.gif" data-toggle="modal" data-target="#idSignModal"/></a>
+        {# The action that initiates the addition of new signature with Mobile ID to the container in DDS session. #}
+        <a href="#"><img src="assets/images/mid-logo.gif" data-toggle="modal" data-target="#mobileSignModal"/></a>
+    </th>
+    </tr>
+        {% for signature in signatures %}
+            <tr class="{% if signature.Error.Category == 'WARNING' %}alert-warning{%endif %}{% if signature.Status == 'ERROR' %}alert-error{%endif %}">
+            {{ signature.Id }}
+            <td>{{ signature.Id }}</td>
+            <td>{{ signature.Status }}</td>
+            <td>{{ signature.alternative_info }}</td>
+            <td>{{ signature.SigningTime }}</td>
+            <td>{{ signature.Role }}</td>
+            <td>{{ signature.Signer.CommonName }}</td>
+            {# The action that initiates the removal of this signature. #}
+            <td>
+                <button onclick="ee.sk.hashcode.RemoveSignature('{{ signature.Id }}');">
+                    Remove signature
+                </button>
+            </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>

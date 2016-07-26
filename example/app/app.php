@@ -1,37 +1,4 @@
 <?php
-/**
- * This is the example web application that demonstrates how to handle hashcode containers together with hashcode
- * PHP library and DigiDocService.
- *
- * For configuration and usage information of this example application see _README.txt in example web applications
- * root folder.
- *
- * Current file services all the requests made to the example web app and acts as a controller.
- *
- * PHP version 5.3+
- *
- * LICENSE:
- *
- * This library is free software; you can redistribute it
- * and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation;
- * either version 2.1 of the License, or (at your option) any
- * later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
- * @package       DigiDocHashcodeExample
- * @version       1.0.0
- * @author        Tarmo Kalling <tarmo.kalling@nortal.com>
- * @license       http://www.opensource.org/licenses/lgpl-license.php LGPL
- */
 
 date_default_timezone_set('Europe/Tallinn');
 $_REQUEST['requestId'] = uniqid('sk_dds_hashcode', true);
@@ -76,6 +43,33 @@ $supportedDigiDocActions = array (
     'REMOVE_SIGNATURE'
 );
 
+// App entry point
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array(get_request_act(), $recognized_post_request_acts, true)) {
+   
+    post_request_get_actions($supportedDigiDocActions, $dds, $twig);
+    Doc_Helper::persist_hashcode_session();
+
+} else { // Default behavior is to show the index page.
+  loadStartPageTemplate ($dds, $twig);
+}
+
+function post_request_get_actions($supportedDigiDocActions, $dds, $twig) {
+     // Some kind of document processing request has probably already been instantiated.
+    // Following request_act-s return something else than text/html.
+    $requestedAction = $_POST['request_act'];
+
+    if ($requestedAction === 'DOWNLOAD') {
+        require 'controllers/download.php';
+    } elseif ($requestedAction === 'MID_SIGN') {
+        require 'controllers/mid_sign.php';
+    } elseif ($requestedAction === 'ID_SIGN_CREATE_HASH') {
+        require 'controllers/id_sign_create_hash.php';
+    } else {
+        // Rest of the request_act-s all return text/html.
+      loadDigiDocActionTemplates($supportedDigiDocActions, $requestedAction, $dds, $twig);
+      include 'controllers/show_doc_info.php';
+    }
+}
 /**
  * Check if there is open session then try to close it
  *
@@ -121,28 +115,4 @@ function loadStartPageTemplate ($dds, $twig) {
   echo $twig->render('header.twig');
   echo $twig->render('default.twig');
   echo $twig->render('footer.twig');
-}
-
-// App entry point
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array(get_request_act(), $recognized_post_request_acts, true)) {
-    // Some kind of document processing request has probably already been instantiated.
-    // Following request_act-s return something else than text/html.
-    $requestedAction = $_POST['request_act'];
-
-    if ($requestedAction === 'DOWNLOAD') {
-        require 'controllers/download.php';
-    } elseif ($requestedAction === 'MID_SIGN') {
-        require 'controllers/mid_sign.php';
-    } elseif ($requestedAction === 'ID_SIGN_CREATE_HASH') {
-        require 'controllers/id_sign_create_hash.php';
-    } else {
-        // Rest of the request_act-s all return text/html.
-      loadDigiDocActionTemplates($supportedDigiDocActions, $requestedAction, $dds, $twig);
-
-    }
-
-    Doc_Helper::persist_hashcode_session();
-
-} else { // Default behavior is to show the index page.
-  loadStartPageTemplate ($dds, $twig);
 }

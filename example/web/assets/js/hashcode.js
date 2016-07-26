@@ -1,102 +1,61 @@
-/**
- * This is the example web application that demonstrates how to handle hashcode containers together with hashcode
- * PHP library and DigiDocService.
- *
- * Current file is the javascript helper for the hashcode application.
- *
- * LICENSE:
- *
- * This library is free software; you can redistribute it
- * and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation;
- * either version 2.1 of the License, or (at your option) any
- * later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
- * @version	   1.0.0
- * @author     Tarmo Kalling <tarmo.kalling@nortal.com>
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- */
+'use strict';
 
-"use strict";
-
-function http_post(path, params, method) {
-    method = method || "post"; // Set method to post by default if not specified.
+function httpPost(path, params, method) {
+    // Set method to post by default if not specified.
+    method = method || 'post';
 
     // The rest of this code assumes you are not using a library.
     // It can be made less wordy if you use one.
-    var form = document.createElement("form");
-    form.setAttribute("method", method);
-    form.setAttribute("action", path);
+    var $submitForm = $('<form />').attr({
+        method: method,
+        action: path
+    });
 
     for (var key in params) {
-        if (params.hasOwnProperty(key)) {
-            var hiddenField = document.createElement("input");
-            hiddenField.setAttribute("type", "hidden");
-            hiddenField.setAttribute("name", key);
-            hiddenField.setAttribute("value", params[key]);
-
-            form.appendChild(hiddenField);
+        if (!params.hasOwnProperty(key)) {
+            continue;
         }
+
+        var $hiddenField = $('<input />').attr({
+            type: 'hidden',
+            name: key,
+            value: params[key]
+        });
+
+        $submitForm.append($hiddenField);
     }
 
-    document.body.appendChild(form);
-    form.submit();
-}
-
-function show_local_signing_error(ex) {
-    var error_message;
-    if (ex instanceof IdCardException) {
-        error_message = '[Error code: ' + ex.returnCode + '; Message: ' + ex.message + ']';
-    } else {
-        error_message = ex.message != undefined ? ex.message : ex;
-    }
-    jQuery('#idSignModalErrorContainer').html(error_message);
-    jQuery('#idSignModalErrorContainer').show();
-}
-
-function show_signing_error(ex, signatureId) {
-    var error_message;
-    if (ex instanceof IdCardException) {
-        error_message = '[Error code: ' + ex.returnCode + '; Message: ' + ex.message + ']';
-    } else {
-        error_message = ex.message != undefined ? ex.message : ex;
-    }
-
-    var params = {
-        request_act: 'ID_SIGN_COMPLETE',
-        error_message: error_message
-    };
-    if (signatureId) {
-        params.signature_id = signatureId;
-    }
-    http_post('', params);
+    $(document.body).append($submitForm);
+    $submitForm.submit();
 }
 
 /*
  * Logic for asynchronous and synchronous requests that need JavaScripts help.
  */
-var ee = ee == undefined ? {} : ee;
-ee.sk = ee.sk == undefined ? {} : ee.sk;
-ee.sk.hashcode = ee.sk.hashcode == undefined ? {} : ee.sk.hashcode;
+var ee = ee === undefined ? {} : ee;
+ee.sk = ee.sk === undefined ? {} : ee.sk;
+ee.sk.hashcode = ee.sk.hashcode === undefined ? {} : ee.sk.hashcode;
 
 ee.sk.hashcode = {
+    defaultPath: '',
     DownloadContainer: function () {
-        http_post('', {
+        var token = $('#download-container')
+            .find('input[name=_token]')
+            .val();
+
+        httpPost(this.defaultPath, {
+            _token: token,
             request_act: 'DOWNLOAD'
         });
     },
 
     RemoveDataFile: function (datafileId, datafileName) {
-        http_post('', {
+        var token = $('#container-data-files')
+            .find('input[name=_token]')
+            .val();
+
+        httpPost(this.defaultPath, {
+            _token: token,
             request_act: 'REMOVE_DATA_FILE',
             datafileId: datafileId,
             datafileName: datafileName
@@ -104,93 +63,106 @@ ee.sk.hashcode = {
     },
 
     RemoveSignature: function (signatureId) {
-        http_post('', {
+        var token = $('#container-signatures')
+            .find('input[name=_token]')
+            .val();
+
+        httpPost(this.defaultPath, {
+            _token: token,
             request_act: 'REMOVE_SIGNATURE',
             signatureId: signatureId
         });
     },
 
     StartMobileSign: function () {
-        $('#mobileSignErrorContainer').hide();
-        var phoneNo = jQuery('#mid_PhoneNumber').val();
-        var idCode = jQuery('#mid_idCode').val();
-        if (!phoneNo) {
-            $('#mobileSignErrorContainer')
-                .html('Phone number is mandatory!')
-                .show();
+        var $errorContainer = $('#mobileSignErrorContainer');
+
+        $errorContainer.hide();
+        var phoneNumber = $('#mid_PhoneNumber').val(),
+            token = $('#mobileSignModalFooter').find('input[type=hidden][name=_token]').val(),
+            idCode = $('#mid_idCode').val();
+
+        if (!phoneNumber) {
+            $errorContainer.html('Phone number is mandatory!').show();
         } else if (!idCode) {
-            $('#mobileSignErrorContainer')
-                .html('Social security number is mandatory!')
-                .show();
+            $errorContainer.html('Social security number is mandatory!').show();
         } else {
-            jQuery.post(
-                '',
-                {
-                    request_act: 'MID_SIGN',
-                    phoneNo: phoneNo,
-                    idCode: idCode,
-                    subAct: 'START_SIGNING'
-                }
-            ).done(function (resp) {
-                    if (resp["error_message"]) {
-                        jQuery('#mobileSignErrorContainer').html('There was an error initiating ' +
-                            'MID signing: ' + resp['error_message'])
-                        jQuery('#mobileSignErrorContainer').show();
+            $.post(this.defaultPath, {
+                _token: token,
+                request_act: 'MID_SIGN',
+                phoneNo: phoneNumber,
+                idCode: idCode,
+                subAct: 'START_SIGNING'
+            }).done(function (response) {
+                    if (response.error_message) {
+                        $errorContainer.html('There was an error initiating ' +
+                            'MID signing: ' + response.error_message);
+                        $errorContainer.show();
                     } else {
-                        jQuery('#mobileSignModalHeader').hide();
-                        jQuery('#mobileSignModalFooter').hide();
-                        var challenge = resp['challenge'];
-                        jQuery('.mobileSignModalContent').html('<table><tr><td style="width: 75%;">' +
+                        $('#mobileSignModalHeader').hide();
+                        $('#mobileSignModalFooter').hide();
+                        var challenge = response.challenge;
+                        $('.mobileSignModalContent').html('<table><tr><td style="width: 75%;">' +
                             '<h4>Sending digital signing request to phone is in progress ...</h4>' +
-                        '<p style="font-size: 12px;">Make sure control code matches with one in the phone screen and enter Mobile-ID PIN2. ' +
-                        'After you enter signing PIN, a digital signature is created to the document, which may bind you to legal liabilities. ' +
-                        'You must therefore agree to the content of the document. When in doubt, please go back and check document contents.</p></td>' +
-                        '<td style="vertical-align: middle; text-align: center;">' +
+                            '<p style="font-size: 12px;">Make sure control code matches with one in the ' +
+                            'phone screen and enter Mobile-ID PIN2. ' +
+                            'After you enter signing PIN, a digital signature is created to the document, ' +
+                            'which may bind you to legal liabilities. ' +
+                            'You must therefore agree to the content of the document. When in doubt, please ' +
+                            'go back and check document contents.</p></td>' +
+                            '<td style="vertical-align: middle; text-align: center;">' +
                             'Control code:' +
                             '<h2>' + challenge + '</h2>' +
                         '</td></tr></table>');
                         var intervalId = setInterval(function () {
-                            jQuery.post(
-                                '',
-                                {
-                                    request_act: 'MID_SIGN',
-                                    subAct: 'GET_SIGNING_STATUS'
-                                }
-                            ).done(function (status_resp) {
-                                    if (status_resp["is_success"] == true) {
-                                        clearInterval(intervalId);
-                                        http_post('', {
-                                            request_act: 'MID_SIGN_COMPLETE'
-                                        });
-                                    } else if (!!status_resp['error_message']) {
-                                        clearInterval(intervalId);
-                                        http_post('', {
-                                            request_act: 'MID_SIGN_COMPLETE',
-                                            error_message: status_resp['error_message']
-                                        });
-                                    }
-                                }).fail(function (data) {
+                            $.post('', {
+                                _token: token,
+                                request_act: 'MID_SIGN',
+                                subAct: 'GET_SIGNING_STATUS'
+                            }).done(function (statusResponse) {
+                                if (statusResponse.is_success === true) {
                                     clearInterval(intervalId);
-                                    http_post('', {
-                                        request_act: 'MID_SIGN_COMPLETE',
-                                        error_message: data.status + '-' + data.statusText
+                                    httpPost('', {
+                                        _token: token,
+                                        request_act: 'MID_SIGN_COMPLETE'
                                     });
-                                })
+                                } else if (!!statusResponse.error_message) {
+                                    clearInterval(intervalId);
+                                    httpPost('', {
+                                        _token: token,
+                                        request_act: 'MID_SIGN_COMPLETE',
+                                        error_message: statusResponse.error_message
+                                    });
+                                }
+                            }).fail(function (data) {
+                                clearInterval(intervalId);
+                                httpPost('', {
+                                    _token: token,
+                                    request_act: 'MID_SIGN_COMPLETE',
+                                    error_message: data.status + '-' + data.statusText
+                                });
+                            });
                         }, 3000);
                     }
                 }).fail(function (data) {
-                    jQuery('#mobileSignErrorContainer').html('There was an error performing AJAX request to initiate ' +
-                        'MID signing: ' + data.status + '-' + data.statusText)
-                    jQuery('#mobileSignErrorContainer').show();
+                    $errorContainer.html('There was an error performing AJAX request to initiate ' +
+                        'MID signing: ' + data.status + '-' + data.statusText);
+                    $errorContainer.show();
                 });
         }
 
     },
 
-    // ID card signing methods
-    // Please read: https://github.com/open-eid/js-token-signing/wiki/ModernAPI
-    //
-    // There You will have very good overview of API and much more compact example of signing using JavaScript
+
+    /**
+     *
+     * ID card signing methods
+     * Please read: https://github.com/open-eid/js-token-signing/wiki/ModernAPI
+     *
+     * There You will have very good overview of API and much more compact example of signing using JavaScript
+     *
+     * @param reason
+     */
     errorHandler: function (reason) {
         var longMessage = 'ID-card siging: ',
             $errorContainer = $('#idSignModalErrorContainer');
@@ -218,29 +190,41 @@ ee.sk.hashcode = {
                     'More information about on id.installer.ee';
                 break;
             case hwcrypto.TECHNICAL_ERROR:
-            default:
-                longMessage += 'Unknown technical error occurred'
+                longMessage += 'Unknown technical error occurred';
+                break;
+            default: longMessage += 'Unknown error occurred that we can not explain';
         }
 
         $errorContainer.text(longMessage).show();
         console.log('exiting error handler...');
     },
 
-    hashCreateResponseHandler: function (status_resp, lang, cert) {
-        var self = this;
-        if (status_resp["is_success"] == true) {
-            var signatureDigest = status_resp['signature_info_digest'],
-                signatureID = status_resp['signature_id'],
-                signatureHashType = status_resp['signature_hash_type'];
+    /**
+     * Handle prepare for signing response
+     *
+     * @param statusResponse
+     * @param language
+     * @param certificate
+     * @param token
+     */
+    hashCreateResponseHandler: function (statusResponse, language, certificate, token) {
+        var self = this,
+            actionToComplete = 'ID_SIGN_COMPLETE';
+
+        if (statusResponse.is_success === true) {
+            var signatureDigest = statusResponse.signature_info_digest,
+                signatureID = statusResponse.signature_id,
+                signatureHashType = statusResponse.signature_hash_type;
 
             window.hwcrypto
-                .sign(cert, {
+                .sign(certificate, {
                     hex: signatureDigest,
-                    type: signatureHashType,
-                }, {lang: 'en'})
+                    type: signatureHashType
+                }, {lang: language})
                 .then(function (signature) {
-                     http_post('', {
-                        request_act: 'ID_SIGN_COMPLETE',
+                     httpPost('', {
+                        _token: token,
+                        request_act: actionToComplete,
                         signature_id: signatureID,
                         signature_value: signature.hex
                     });
@@ -248,62 +232,52 @@ ee.sk.hashcode = {
                     console.log('error occurred when started signing document');
                     self.errorHandler(reason);
                 });
-        } else if (!!status_resp['error_message']) {
-            http_post('', {
-                request_act: 'ID_SIGN_COMPLETE',
-                error_message: status_resp['error_message']
+        } else if (!!statusResponse.error_message) {
+            httpPost('', {
+                _token: token,
+                request_act: actionToComplete,
+                error_message: statusResponse.error_message
             });
         }
     },
 
     prepareSigningParameters: function (cert) {
-        var role = $('#idSignRole').val(),
-            city = $('#idSignCity').val(),
-            state = $('#idSignState').val(),
-            postalCode = $('#idSignPostalCode').val(),
-            country = $('#idSignCountry').val();
+        var idSignCreateHashRequestParameters = {
+                request_act: 'ID_SIGN_CREATE_HASH',
+                signersCertificateHEX: cert.hex
+            },
+            prepareSigningParameterKeys = ['Role', 'City', 'Stat', 'PostalCode', 'Country'],
+            len = prepareSigningParameterKeys.length;
 
-        var id_sign_create_hash_req_params = {
-            request_act: 'ID_SIGN_CREATE_HASH',
-            signersCertificateHEX: cert.hex
-        };
+        for (var i = 0; i < len; i++) {
+            var key = prepareSigningParameterKeys[i],
+                value = $('#idSign' + prepareSigningParameterKeys[i]).val();
 
-        if (role) {
-            id_sign_create_hash_req_params.signersRole = role;
+            if (value) {
+             idSignCreateHashRequestParameters['signers' + key] = value;
+            }
         }
 
-        if (city) {
-            id_sign_create_hash_req_params.signersCity = city;
-        }
-
-        if (state) {
-            id_sign_create_hash_req_params.signersState = state;
-        }
-
-        if (postalCode) {
-            id_sign_create_hash_req_params.signersPostalCode = postalCode;
-        }
-
-        if (country) {
-            id_sign_create_hash_req_params.signersCountry = country;
-        }
-
-        return id_sign_create_hash_req_params;
+        return idSignCreateHashRequestParameters;
     },
 
     IDCardSign: function () {
         $('#idSignModalErrorContainer').hide();
-        var self = this;
-        var lang = 'eng';
+        var self = this,
+            token = $('#idSignModalFooter').find('input[name=_token]').val(),
+            lang = 'eng';
 
         window.hwcrypto.getCertificate({lang: lang}).then(function (cert) {
-            var id_sign_create_hash_req_params = self.prepareSigningParameters(cert);
-            $.post('', id_sign_create_hash_req_params)
-                .done(function (status_resp) {
-                    self.hashCreateResponseHandler(status_resp, lang, cert);
+            var idSignCreateHashRequestParameters = self.prepareSigningParameters(cert);
+
+            idSignCreateHashRequestParameters._token = token;
+            $.post('', idSignCreateHashRequestParameters)
+                .done(function (statusResponse) {
+                    self.hashCreateResponseHandler(statusResponse, lang, cert, token);
                 })
                 .fail(function (data) {
-                    http_post('', {
+                    httpPost('', {
+                        _token: token,
                         request_act: 'ID_SIGN_COMPLETE',
                         error_message: data.status + '-' + data.statusText
                     });
