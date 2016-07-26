@@ -16,7 +16,7 @@ try {
         Doc_Helper::add_datafile_via_dds($path_to_datafile, $datafile_mime_type);
     } catch (Exception $e) {
         show_error_text($e);
-       // $error_on_dds_add = true;
+        $error_on_dds_add = true;
     }
 
     if (!$error_on_dds_add) {

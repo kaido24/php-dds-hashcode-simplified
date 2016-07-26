@@ -57,7 +57,7 @@ function post_request_get_actions($supportedDigiDocActions, $dds, $twig) {
      // Some kind of document processing request has probably already been instantiated.
     // Following request_act-s return something else than text/html.
     $requestedAction = $_POST['request_act'];
-
+print_r($requestedAction);
     if ($requestedAction === 'DOWNLOAD') {
         require 'controllers/download.php';
     } elseif ($requestedAction === 'MID_SIGN') {
@@ -96,7 +96,7 @@ function killDdsSession (DigiDocService $dds) {
 function loadDigiDocActionTemplates($actionList, $requestedAction, $dds, $twig) {
     // Rest of the request_act-s all return text/html.
 
-  echo $twig->render('header.twig', array('not-front' => TRUE));
+  echo $twig->render('header.twig');
 
     foreach ($actionList as $action) {
         if ($requestedAction === $action) {
@@ -112,7 +112,7 @@ function loadDigiDocActionTemplates($actionList, $requestedAction, $dds, $twig) 
  */
 function loadStartPageTemplate ($dds, $twig) {
   killDdsSession($dds);
-  echo $twig->render('header.twig');
+  echo $twig->render('header.twig', array('front' => TRUE));
   echo $twig->render('default.twig');
   echo $twig->render('footer.twig');
 }
