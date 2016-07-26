@@ -1,3 +1,5 @@
 vendor
 composer.lock
 example/web/upload/*
+node_modules
+bower_components
