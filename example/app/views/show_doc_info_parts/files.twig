@@ -6,6 +6,7 @@
             <th>Name</th>
             <th>Mime</th>
             <th>Length</th>
+             <th>Content type</th>
             <th>
             <button data-toggle="modal" data-target="#addDatafileModal">Add datafile</button>
             </th>
@@ -14,14 +15,15 @@
 {% for data_file in data_files %}
     <tr>
        <td>{% if data_file.Id %} {{ data_file.Id }} {% endif %}</td>
-        <td>{% if data_file.FilenameId %} {{ data_file.Filename }} {% endif %}</td>
+        <td>{% if data_file.Filename %} {{ data_file.Filename }} {% endif %}</td>
         <td>{% if data_file.MimeType %} {{ data_file.MimeType }} {% endif %}</td>
         <td>{% if data_file.Size %} {{ data_file.Size }} {% endif %}</td>
+        <td>{% if data_file.ContentType %} {{ data_file.ContentType }} {% endif %}</td>
         <td>
            {# The action that initiates the removal of this datafile. #}
             <button
                 onclick="ee.sk.hashcode.RemoveDataFile('{% if data_file.Id %}{{ data_file.Id }}{% endif %}',
-                    '{% if data_file.FilenameId %}{{ data_file.Filename }}{% endif %}');">Remove
+                    '{% if data_file.Filename %}{{ data_file.Filename }}{% endif %}');">Remove
                 datafile
             </button>
         </td>

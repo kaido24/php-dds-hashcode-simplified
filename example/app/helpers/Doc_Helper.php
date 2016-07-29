@@ -86,7 +86,6 @@ class Doc_Helper {
         $handler = fopen($path_to_created_doc, 'w');
         fwrite($handler, $with_files_container_contents);
         fclose($handler);
-
         return $path_to_created_doc;
     }
 
@@ -300,7 +299,6 @@ class Doc_Helper {
       ));
             $_REQUEST['hashcodeSession'] = $ddoc->createSession();
         }
-        print_r($_REQUEST['hashcodeSession']);
     }
 
 } 

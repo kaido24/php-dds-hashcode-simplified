@@ -1,5 +1,6 @@
 <?php
-
+apache_setenv('no-gzip', 1);
+ini_set('zlib.output_compression', 0);
 try {
     $file_upload_input_name = 'dataFile';
     //Check if the there were any errors on the first datafile upload.

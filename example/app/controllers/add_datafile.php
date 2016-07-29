@@ -10,6 +10,7 @@ try {
         // Store the data file to a more permanent place
         $path_to_datafile = File_Helper::move_uploaded_file_to_upload_dir($file_upload_input_name);
 
+
         // Add data file as HASHCODE to the container in DDS session
         $datafile_mime_type = $_FILES[$file_upload_input_name]['type'];
 

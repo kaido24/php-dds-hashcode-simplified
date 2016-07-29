@@ -143,7 +143,7 @@ class File_Helper {
      * @return string - New location of the datafile.
      * @throws Exception - If there was a problem with moving the file to the user specified directory.
      */
-    public static function move_uploaded_file_to_upload_dir ($file_input_name) {
+    public static function move_uploaded_file_to_upload_dir($file_input_name) {
         $filename = $_FILES[$file_input_name]['name'];
         $dir_path = self::get_upload_directory();
 
@@ -156,7 +156,6 @@ class File_Helper {
             throw new FileException('There was a problem saving the uploaded file to disk.');
         }
         debug_log("Uploaded file moved to location '$destination'.");
-
         return $destination;
     }
 
@@ -171,7 +170,6 @@ class File_Helper {
         }
         if (!is_dir($path)) {
             unlink($path);
-
             return;
         }
 
@@ -183,6 +181,7 @@ class File_Helper {
             }
         }
         rmdir($path);
+        return 'tehtud';
     }
 
     /**

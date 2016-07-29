@@ -54,7 +54,7 @@ define('HASHCODE_APP_UPLOAD_DIRECTORY', dirname(__DIR__) . DIRECTORY_SEPARATOR .
 /**
  * If this is set to TRUE, then all SOAP envelopes used for communication with DigiDocService are logged.
  */
-define('LOG_ALL_DDS_REQUESTS_RESPONSES', false);
+define('LOG_ALL_DDS_REQUESTS_RESPONSES', true);
 
 /**
  * If this is set to FALSE, then all information logging in this application will be turned off.
