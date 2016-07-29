@@ -174,7 +174,6 @@ class Doc_Helper {
         $original_container_path = File_Helper::get_upload_directory(). DIRECTORY_SEPARATOR . get_original_container_name();
         $doc = self::get_container_type(get_original_container_name()) == 'BDOC' ?
             new BdocContainer($original_container_path) : new DdocContainer($original_container_path);
-
         return $doc->getDataFiles();
     }
 
@@ -296,9 +295,12 @@ class Doc_Helper {
         if (isset($_SESSION['hashcodeSession'])) {
             $_REQUEST['hashcodeSession'] = $_SESSION['hashcodeSession'];
         } else {
-            $ddoc = new \SK\Digidoc\Digidoc();
+            $ddoc = new \SK\Digidoc\Digidoc( array(
+           \SK\Digidoc\Digidoc::TEMPORARY_DIR => HASHCODE_APP_TMP_DIR
+      ));
             $_REQUEST['hashcodeSession'] = $ddoc->createSession();
         }
+        print_r($_REQUEST['hashcodeSession']);
     }
 
 } 
