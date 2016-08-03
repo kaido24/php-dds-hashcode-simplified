@@ -3,7 +3,7 @@
 date_default_timezone_set('Europe/Tallinn');
 $_REQUEST['requestId'] = uniqid('sk_dds_hashcode', true);
 
-require __DIR__.'/../../vendor/autoload.php';
+require __DIR__.'/vendor/autoload.php';
 require __DIR__.'/configuration.php';
 require __DIR__.'/exception/FileException.php';
 require __DIR__.'/functions.php';
@@ -45,7 +45,6 @@ $supportedDigiDocActions = array (
 
 // App entry point
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array(get_request_act(), $recognized_post_request_acts, true)) {
-   
     post_request_get_actions($supportedDigiDocActions, $dds, $twig);
     Doc_Helper::persist_hashcode_session();
 
@@ -57,7 +56,7 @@ function post_request_get_actions($supportedDigiDocActions, $dds, $twig) {
      // Some kind of document processing request has probably already been instantiated.
     // Following request_act-s return something else than text/html.
     $requestedAction = $_POST['request_act'];
-print_r($requestedAction);
+    //print_r($requestedAction);
     if ($requestedAction === 'DOWNLOAD') {
         require 'controllers/download.php';
     } elseif ($requestedAction === 'MID_SIGN') {

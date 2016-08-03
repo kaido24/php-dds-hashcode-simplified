@@ -11,9 +11,9 @@
     }
   ],
   "autoload": {
-    "classmap": ["example/app"],
+    "classmap": [""],
     "psr-0": {
-      "SK\\Digidoc\\": ["hashcode-lib/src", "example/app/src"]
+      "SK\\Digidoc\\": ["./../../hashcode-lib/src", "src"]
     }
   },
   "require": {

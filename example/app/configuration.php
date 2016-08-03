@@ -49,7 +49,7 @@ define('DDS_MID_INTRODUCTION_STRING', 'SK näidis hashcode allkirjastamine.');
 /**
  * Directory where the uploaded files are copied and temporary files stored. SHOULD END WITH A DIRECTORY_SEPARATOR!!!
  */
-define('HASHCODE_APP_UPLOAD_DIRECTORY', dirname(__DIR__) . DIRECTORY_SEPARATOR . 'app/upload' . DIRECTORY_SEPARATOR);
+define('HASHCODE_APP_UPLOAD_DIRECTORY', dirname(__DIR__) . DIRECTORY_SEPARATOR . 'app' .  DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR);
 
 /**
  * If this is set to TRUE, then all SOAP envelopes used for communication with DigiDocService are logged.
